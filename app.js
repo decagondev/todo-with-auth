@@ -26,7 +26,7 @@ loginForm.addEventListener('submit', (e) => {
   const password = document.getElementById('password').value;
 
   if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
-    sessionStorage.setItem(SESSION_KEY, username);
+    saveSession(username);
     loginForm.reset();
     loginError.hidden = true;
     showApp(username);
@@ -38,7 +38,7 @@ loginForm.addEventListener('submit', (e) => {
 });
 
 document.getElementById('logout').addEventListener('click', () => {
-  sessionStorage.removeItem(SESSION_KEY);
+  clearSession();
   appScreen.hidden = true;
   loginScreen.hidden = false;
   document.getElementById('username').focus();
@@ -155,9 +155,33 @@ function saveTodos() {
   }
 }
 
+function loadSession() {
+  try {
+    return localStorage.getItem(SESSION_KEY);
+  } catch {
+    return null;
+  }
+}
+
+function saveSession(username) {
+  try {
+    localStorage.setItem(SESSION_KEY, username);
+  } catch {
+    /* storage unavailable — session lasts until the page is closed */
+  }
+}
+
+function clearSession() {
+  try {
+    localStorage.removeItem(SESSION_KEY);
+  } catch {
+    /* nothing to clear */
+  }
+}
+
 /* ---------- boot ---------- */
 
-const existing = sessionStorage.getItem(SESSION_KEY);
+const existing = loadSession();
 if (existing) {
   showApp(existing);
 } else {
